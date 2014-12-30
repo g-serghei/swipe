@@ -5,8 +5,7 @@
 	<title>Document</title>
 	
 	<script src="jquery-1.11.1.min.js"></script>
-	<script src="jquery-ui.min.js"></script>
-	<script src="swipe-0.1.js"></script>
+	<script src="swipe-0.2.0.js"></script>
 	
 	<style>
 		.wrapper{
@@ -17,6 +16,7 @@
 			padding: 10px;
 			background: #d1d1d1;
 			margin-bottom: 3px;
+			position: relative;
 		}
 		.btn-danger{
 			padding: 5px;
@@ -56,6 +56,13 @@
 					},
 					callback: function(e){
 						$(this).closest('.swipe-item').remove();
+					}
+				},
+				{
+					html: 'C',
+					cssClass: 'btn-default',
+					callback: function(e){
+						alert('Test');
 					}
 				}
 			]
