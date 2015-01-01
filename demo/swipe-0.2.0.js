@@ -3,18 +3,18 @@ function SwipeDrag(options) {
 	this.initOptions(options);
 
 	var self = this;
-	self.options.element.on("mousedown", function(e) {
+	self.options.element.on('mousedown', function(e) {
 		self.element = $(this);
 		self.mouseDown = true;
 
 		var	pos_x = parseInt(self.element.css('margin-left')) + self.elemWidth - e.pageX;
 
-		self.element.parent().off("mousemove").on("mousemove", self.mouseMove(pos_x));
+		self.element.parent().off('mousemove').on('mousemove', self.mouseMove(pos_x));
 
 		e.preventDefault();
 	});
 
-	$(document).on("mouseup", self.mouseUp());
+	$(document).on('mouseup', self.mouseUp());
 
 }
 
@@ -57,7 +57,7 @@ SwipeDrag.prototype.mouseMove = function(pos_x) {
 
 		self.element.css({
 			'margin-left': x
-		}).on("mouseup", self.mouseUp());
+		}).on('mouseup', self.mouseUp());
 	}
 }
 
@@ -89,22 +89,32 @@ $.fn.swipe = function(options){
 
   	var that = $(this);
 	var swipe_wrapper = that.parent();
-	var buttons_wrapper_width = Object.keys(options.actions).length * options.buttonWidth;
+	var buttons_wrapper_width = options.actions.length * options.buttonWidth;
 	var button_height = that.outerHeight();
 
 	options.elementClick = function(event){
 		revertSwipe($(event.currentTarget));
-		options.elemClick.apply(event.currentTarget, [event]);
+
+		options.elemClick && options.elemClick.apply(event.currentTarget, [event]);
 	};
 
     that.on('click', options.elementClick);
 
 	that.parent().css('overflow-x', 'hidden');
 
+
+	that.each(function(){
+		$(this).wrap('<div style="position: relative; overflow: hidden;"></div>');
+	});
+
 	new SwipeDrag({
-		element: $(this),
-		onDrag: function(event, ui){
-			options.onDrag && options.onDrag(event, ui);
+		element: that,
+		onDrag: function(event){
+			var btnCount = $(event.currentTarget).find(that).find('button').size();
+			var left = Math.round(event.pageX - event.offsetX - swipe_wrapper.offset().left - (btnCount * options.buttonWidth));
+			swipeAnimation($(event.currentTarget), left);
+
+			options.onDrag && options.onDrag(event);
 		},
         onStart: function(elem) {
 			revertSwipe(elem);
@@ -121,8 +131,9 @@ $.fn.swipe = function(options){
 
 	var btns = getButtons();
 	$.each(that, function(k, elem){
-		btns.clone(true).prependTo($(elem));
+		btns.clone(true).prependTo($(elem).parent());
 	});
+
 
 	function getButtons(){
 		var buttons_wrapper = $('<div></div>');
@@ -137,7 +148,10 @@ $.fn.swipe = function(options){
 
 			btn.css({
 				'width': options.buttonWidth + 'px',
-				'height': button_height + 'px'
+				'height': button_height + 'px',
+				'position': 'absolute',
+				'left': '0',
+				'top': '0'
 			});
 
 			action.htmlOptions && $.each(action.htmlOptions, function(option_name, option_value){
@@ -148,17 +162,56 @@ $.fn.swipe = function(options){
 
 		buttons_wrapper.addClass('swipe-buttons').css({
 			'position': 'absolute',
-			'left': -buttons_wrapper_width + 'px',
+			'left': '0',
+			'height': button_height + 'px',
+			'overflow': 'hidden',
 			'top': '0',
-			'width': buttons_wrapper_width + 'px'
+			'width': options.buttonWidth + 'px'
 		});
 		return buttons_wrapper;
 	}
 
+	function swipeAnimation(elem, left) {
+		var active_elem = elem.find(that);
+		var btn_wrapper = elem.find('.swipe-buttons');
+		var btnCount = active_elem.find('button').size();
+
+		var btn = null;
+		if(left >= options.buttonWidth) {
+			btn = btn_wrapper.find('button').last();
+			btn.clone(true).prependTo(active_elem).css({
+				'left': - ((btnCount + 1) * options.buttonWidth) + 'px'
+			});
+			btn.remove();
+		}
+
+		if(left < 0) {
+			btn = active_elem.find('button').first();
+			btn.clone(true).appendTo(btn_wrapper).css({
+				'left': '0'
+			});
+			btn.remove();
+		}
+	}
+
 	function revertSwipe(current_element){
-		that.not(current_element).animate({
-			'margin-left': '0'
-		}, 300);
+		that.not(current_element).each(function() {
+			var elem = $(this);
+			if(parseInt(elem.css('margin-left')) != 0) {
+				elem.animate({
+					'margin-left': '0'
+				}, {
+					duration: 700,
+					progress: function() {
+						var btnCount = elem.find('button').size();
+						var left = parseInt(elem.css('margin-left')) - (btnCount * options.buttonWidth);
+						swipeAnimation($(this).parent(), left);
+					}
+				});
+			}
+		});
+
+
 	}
 
 }

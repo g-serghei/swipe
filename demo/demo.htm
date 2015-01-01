@@ -2,55 +2,59 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
-	
+	<title>Swipe plugin</title>
+	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"/>
 	<script src="jquery-1.11.1.min.js"></script>
 	<script src="swipe-0.2.0.js"></script>
 	
 	<style>
 		.wrapper{
-			width: 500px;
 			border: 1px solid #000;
 		}
 		.swipe-item{
-			padding: 10px;
-			background: #d1d1d1;
+			padding: 20px 10px;
+			/*background: #d1d1d1;*/
 			margin-bottom: 3px;
 			position: relative;
+			/*box-shadow: -1px 0 12px #000;*/
 		}
-		.btn-danger{
-			padding: 5px;
-			background: #c93b3b;
+		.btn {
+			border-radius: 0;
+			border: none;
+			/*box-shadow: -1px 0 12px #000;*/
 		}
-		.btn-default{
-			padding: 5px;
-			background: #ded0d0;
+		.main-wrapper {
+			margin-top: 50px;
 		}
+
 	</style>
 	
 </head>
 <body>
-	
-	<div class="wrapper">
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
-		<div class="swipe-item"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+
+	<div class="container main-wrapper">
+		<div class="row">
+			<div class="col-xs-6 col-xs-offset-3">
+				<div class="wrapper">
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+					<div class="swipe-item alert-success"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sapiente, at. </div>
+				</div>
+			</div>
+		</div>
 	</div>
-	
+
 	<script>
 		
-		$('.wrapper .swipe-item').swipe({
-			elemClick: function(e){
-				alert(1);
-			},
+		$('.swipe-item').swipe({
 			buttonWidth: 60,
 			actions: [
 				{
-					html: 'X',
-					cssClass: 'btn-danger',
+					html: '<span class="glyphicon glyphicon-remove"></span>',
+					cssClass: 'btn btn-danger',
 					htmlOptions: {
 						'data-event-id': 2
 					},
@@ -59,8 +63,15 @@
 					}
 				},
 				{
-					html: 'C',
-					cssClass: 'btn-default',
+					html: '<span class="glyphicon glyphicon-plus"></span>',
+					cssClass: 'btn btn-info',
+					callback: function(e){
+						alert('Test');
+					}
+				},
+				{
+					html: '<span class="glyphicon glyphicon-plus"></span>',
+					cssClass: 'btn btn-success',
 					callback: function(e){
 						alert('Test');
 					}
